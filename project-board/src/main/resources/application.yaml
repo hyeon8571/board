@@ -13,6 +13,7 @@ spring:
     username: hyeon8900
     password: shvhsy8571@
     driver-class-name: org.mariadb.jdbc.Driver
+
   jpa:
     defer-datasource-initialization: true
     hibernate.ddl-auto: create
@@ -22,8 +23,10 @@ spring:
       hibernate.default_batch_fetch_size: 100
       hibernate:
         format_sql: true
-  h2.console.enabled: true
   sql.init.mode: always
+
+
+
 
 
 
