@@ -2,4 +2,15 @@
 <thlogic>
     <attr sel="#header" th:replace="header :: header"></attr>
     <attr sel="#footer" th:replace="footer :: footer"></attr>
+
+    <attr sel="#article-table">
+        <attr sel="tbody" th:remove="all-but-first"> <!-- tbody의 첫번째만 남기고 전부 지운다 -->
+            <attr sel="tr[0]" th:each="article : ${articles}"> <!-- tr의 0번째부터 순회하며 아래 요소에 대한 작업 진행-->
+                <attr sel="td.title/a" th:text="${article.title}" th:href="@{'/articles/' + ${article.id}}" /> <!-- a 부분에 다음과 같은 양식으로 하이퍼링크 작성-->
+                <attr sel="td.hashtag" th:text="${article.hashtag}" />
+                <attr sel="td.user-id" th:text="${article.nickname}" />
+                <attr sel="td.created-at/time" th:datetime="${article.createdAt}" th:text="${#temporals.format(article.createdAt, 'yyyy-MM-dd')}" />
+            </attr>
+        </attr>
+    </attr>
 </thlogic>

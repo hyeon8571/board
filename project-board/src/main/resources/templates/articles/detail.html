@@ -38,15 +38,6 @@
         </article>
     </div>
 
-    <div class="row g-5" id="article-buttons">
-        <form id="delete-article-form">
-            <div class="pb-5 d-grid gap-2 d-md-block">
-                <a class="btn btn-success me-md-2" role="button" id="update-article">수정</a>
-                <button class="btn btn-danger me-md-2" type="submit">삭제</button>
-            </div>
-        </form>
-    </div>
-
     <div class="row g-5">
         <section>
             <form class="row g-3 comment-form">
@@ -61,64 +52,32 @@
                 </div>
             </form>
 
-            <ul id="article-comments" class="row col-md-10 col-lg-8 pt-3">
+            <ul id="article-comments" class="roe col-7">
                 <li class="parent-comment">
-                    <form class="comment-delete-form">
-                        <input type="hidden" class="article-id">
-                        <div class="row">
-                            <div class="col-md-10 col-lg-9">
-                                <strong>Uno</strong>
-                                <small><time>2022-01-01</time></small>
-                                <p class="mb-1">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br>
-                                    Lorem ipsum dolor sit amet
-                                </p>
-                            </div>
-                            <div class="col-2 mb-3 align-self-center">
-                                <button type="submit" class="btn btn-outline-danger">삭제</button>
-                            </div>
-                        </div>
-                    </form>
-
-                    <ul class="row me-0">
-                        <li class="child-comment">
-                            <form class="comment-delete-form">
-                                <input type="hidden" class="article-id">
-                                <div class="row">
-                                    <div class="col-md-10 col-lg-9">
-                                        <strong>Uno</strong>
-                                        <small><time>2022-01-01</time></small>
-                                        <p class="mb-1">
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br>
-                                            Lorem ipsum dolor sit amet
-                                        </p>
-                                    </div>
-                                    <div class="col-2 mb-3 align-self-center">
-                                        <button type="submit" class="btn btn-outline-danger">삭제</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </li>
-                    </ul>
-
-                    <div class="row">
-                        <details class="col-md-10 col-lg-9 mb-4">
-                            <summary>댓글 달기</summary>
-                            <form class="comment-form">
-                                <input type="hidden" class="article-id">
-                                <input type="hidden" class="parent-comment-id">
-                                <textarea class="form-control comment-textbox" placeholder="댓글 쓰기.." rows="2" required></textarea>
-                                <button class="form-control btn btn-primary mt-2" type="submit">쓰기</button>
-                            </form>
-                        </details>
+                    <div>
+                        <strong>Uno</strong>
+                        <small><time>2022-01-01</time></small>
+                        <p class="mb-1">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br>
+                            Lorem ipsum dolor sit amet
+                        </p>
                     </div>
                 </li>
-            </ul>
+                <li>
+                    <div>
+                        <strong>Uno</strong>
+                        <small><time>2022-01-01</time></small>
+                        <p>
+                            Lorem ipsum dolor sit ametm consectetur.<br>
+                            Lorem ipsum dolor sit amet
+                        </p>
+                    </div>
+                </li>
+                </ul>
         </section>
     </div>
-
     <div class="row g-5">
-        <nav id="pagination" aria-label="Page navigation">
+        <nav id="pagination" aria-label="Page navigation example">
             <ul class="pagination">
                 <li class="page-item">
                     <a class="page-link" href="#" aria-label="Previous">
@@ -133,7 +92,8 @@
             </ul>
         </nav>
     </div>
-</main>
+
+    </main>
 
 <footer id="footer">
     <hr>
