@@ -99,6 +99,30 @@ class ArticleControllerTest {
         then(paginationService).should().getPaginationBarNumbers(pageable.getPageNumber(), Page.empty().getTotalPages());
     }
 
+    @DisplayName("[VIEW][GET] 게시글 리스트 (게시판 페이지 - 검색어와 함께 호출")
+    @Test
+    public void givenKeyword_whenRequestingSearchingArticlesView_thenReturnsArticlesView() throws Exception {
+        // Given
+        SearchType searchType = SearchType.TITLE;
+        String searchValue = "title";
+        given(articleService.searchArticles(eq(searchType), eq(searchValue), any(Pageable.class))).willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0,1,2,3,4));
+
+        // When & Then
+        mvc.perform(
+                        get("/articles")
+                                .queryParam("searchType", "searchType", searchType.name())
+                                .queryParam("searchValue", searchValue)
+                )
+                .andExpect(status().isOk()) // 정상 호출인지
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML)) // HTML 파일의 컨텐츠인지 (호환되는 컨텐츠 포함)
+                .andExpect(view().name("articles/index")) // 뷰 이름 검사
+                .andExpect(model().attributeExists("articles")) // 내부에 값이 있는지 (이름을 articles로 지정)
+                .andExpect(model().attributeExists("searchTypes")); // 내부에 값이 있는지 (이름을 searchTypes로 지정)
+        then(articleService).should().searchArticles(eq(searchType), eq(searchValue), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
+    }
+
     @DisplayName("[VIEW][GET] 게시글 상세 페이지 - 정상 호출")
     @Test
     public void givenNothing_whenRequestingArticleView_thenReturnsArticleView() throws Exception {
