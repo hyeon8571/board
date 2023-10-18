@@ -7,6 +7,7 @@ import com.project.projectboard.dto.ArticleCommentDto;
 import com.project.projectboard.dto.UserAccountDto;
 import com.project.projectboard.repository.ArticleCommentRepository;
 import com.project.projectboard.repository.ArticleRepository;
+import com.project.projectboard.repository.UserAccountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +34,9 @@ class ArticleCommentServiceTest {
 
     @Mock
     private ArticleRepository articleRepository;
+
+    @Mock
+    private UserAccountRepository userAccountRepository;
 
     @DisplayName("READ - 게시글 ID로 조회 시 해당 게시글의 댓글 리스트 반환")
     @Test
@@ -61,6 +65,7 @@ class ArticleCommentServiceTest {
         // static import [ given = BDDMockito.given, any = ArgumentMatchers.any ]
         ArticleCommentDto dto = createArticleCommentDto("댓글");
         given(articleRepository.getReferenceById(dto.articleId())).willReturn(createArticle());
+        given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(createUserAccount());
         given(articleCommentRepository.save(any(ArticleComment.class))).willReturn(null);
         // articleCommentRepository에 ArticleComment.class의 아무거나 저장하고 null을 리턴
 
@@ -69,6 +74,7 @@ class ArticleCommentServiceTest {
 
         // Then
         then(articleRepository).should().getReferenceById(dto.articleId());
+        then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
         then(articleCommentRepository).should().save(any(ArticleComment.class)); // articleRepository의 save가 호출되어야 한다!
     }
 
@@ -84,6 +90,7 @@ class ArticleCommentServiceTest {
 
         // Then
         then(articleRepository).should().getReferenceById(dto.articleId());
+        then(userAccountRepository).shouldHaveNoInteractions();
         then(articleCommentRepository).shouldHaveNoInteractions();
     }
 
@@ -139,7 +146,6 @@ class ArticleCommentServiceTest {
 
     private UserAccountDto createUserAccountDto() {
         return UserAccountDto.of(
-                1L,
                 "uno",
                 "password",
                 "uno@mail.com",
