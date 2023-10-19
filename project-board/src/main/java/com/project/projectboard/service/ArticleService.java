@@ -5,6 +5,7 @@ import com.project.projectboard.domain.UserAccount;
 import com.project.projectboard.domain.constant.SearchType;
 import com.project.projectboard.dto.ArticleDto;
 import com.project.projectboard.dto.ArticleWithCommentsDto;
+import com.project.projectboard.dto.UserAccountDto;
 import com.project.projectboard.repository.ArticleRepository;
 import com.project.projectboard.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -64,16 +65,24 @@ public class ArticleService {
     public void updateArticle(Long articleId, ArticleDto dto) {
         try {
             Article article = articleRepository.getReferenceById(articleId);
-            if (dto.title() != null) { article.setTitle(dto.title()); }
-            if (dto.content() != null) { article.setContent(dto.content()); }
-            article.setHashtag(dto.hashtag()); // save 과정 필요없이 알아서 update가 됨 (Transaction이 클래스 단위로 지정되어 있기 때문)
-        } catch (EntityNotFoundException e) {
-            log.warn("게시글 업데이트 실패, 게시글을 찾을 수 없습니다 - dto: {}", dto);
+            UserAccount userAccount = userAccountRepository.getReferenceById(dto.userAccountDto().userId());
+
+            if (article.getUserAccount().equals(userAccount)) {
+                if (dto.title() != null) {
+                    article.setTitle(dto.title());
+                }
+                if (dto.content() != null) {
+                    article.setContent(dto.content());
+                }
+                article.setHashtag(dto.hashtag()); // save 과정 필요없이 알아서 update가 됨 (Transaction이 클래스 단위로 지정되어 있기 때문)
+            }
+            } catch (EntityNotFoundException e) {
+            log.warn("게시글 업데이트 실패, 게시글을 수정하는데 필요한 정보를 찾을 수 없습니다 - {}", e.getLocalizedMessage());
         }
     }
 
-    public void deleteArticle(long articleId) {
-        articleRepository.deleteById(articleId);
+    public void deleteArticle(long articleId, String userId) {
+        articleRepository.deleteByIdAndUserAccount_UserId(articleId, userId);
     }
 
     @Transactional(readOnly = true)
