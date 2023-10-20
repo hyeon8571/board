@@ -1,7 +1,5 @@
 package com.project.projectboard.controller;
 
-
-import com.project.projectboard.dto.UserAccountDto;
 import com.project.projectboard.dto.request.ArticleCommentRequest;
 import com.project.projectboard.dto.security.BoardPrincipal;
 import com.project.projectboard.service.ArticleCommentService;
@@ -22,21 +20,20 @@ public class ArticleCommentController {
     @PostMapping("/new")
     public String postNewArticleComment(
             @AuthenticationPrincipal BoardPrincipal boardPrincipal,
-            ArticleCommentRequest articleCommentRequest) {
-
+            ArticleCommentRequest articleCommentRequest
+    ) {
         articleCommentService.saveArticleComment(articleCommentRequest.toDto(boardPrincipal.toDto()));
 
-        return "redirect:/articles/" + articleCommentRequest.articleId();
 
+        return "redirect:/articles/" + articleCommentRequest.articleId();
     }
 
-    @PostMapping ("/{commentId}/delete")
+    @PostMapping("/{commentId}/delete")
     public String deleteArticleComment(
             @PathVariable Long commentId,
             @AuthenticationPrincipal BoardPrincipal boardPrincipal,
             Long articleId
     ) {
-
         articleCommentService.deleteArticleComment(commentId, boardPrincipal.getUsername());
 
         return "redirect:/articles/" + articleId;
