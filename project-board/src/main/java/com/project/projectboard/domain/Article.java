@@ -63,13 +63,13 @@ public class Article extends AuditingFields {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Article)) return false;
+        if (!(o instanceof Article that)) return false;
         Article article = (Article) o;
-        return id != null && id.equals(article.id);
+        return this.getId() != null && this.getId().equals(that.getId()); // getId()가 아닌 바로 id로 접근할 경우 지연로딩 상황에서 해당 값이 null이 아니지만 null로 읽힐 수 있다
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(this.getId());
     }
 }
