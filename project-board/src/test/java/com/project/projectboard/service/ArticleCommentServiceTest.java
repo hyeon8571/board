@@ -2,6 +2,7 @@ package com.project.projectboard.service;
 
 import com.project.projectboard.domain.Article;
 import com.project.projectboard.domain.ArticleComment;
+import com.project.projectboard.domain.Hashtag;
 import com.project.projectboard.domain.UserAccount;
 import com.project.projectboard.dto.ArticleCommentDto;
 import com.project.projectboard.dto.UserAccountDto;
@@ -18,56 +19,48 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
 @DisplayName("비즈니스 로직 - 댓글")
 @ExtendWith(MockitoExtension.class)
 class ArticleCommentServiceTest {
 
-    @InjectMocks
-    private ArticleCommentService sut; // Mock을 주입해주는 대상에만 @InjectMocks
+    @InjectMocks private ArticleCommentService sut;
 
-    @Mock
-    private ArticleCommentRepository articleCommentRepository; // InjectMocks 외의 모든 대상
+    @Mock private ArticleRepository articleRepository;
+    @Mock private ArticleCommentRepository articleCommentRepository;
+    @Mock private UserAccountRepository userAccountRepository;
 
-    @Mock
-    private ArticleRepository articleRepository;
-
-    @Mock
-    private UserAccountRepository userAccountRepository;
-
-    @DisplayName("READ - 게시글 ID로 조회 시 해당 게시글의 댓글 리스트 반환")
+    @DisplayName("게시글 ID로 조회하면, 해당하는 댓글 리스트를 반환한다.")
     @Test
-    void givenArticleId_whenSearchingComments_thenReturnsComments() {
+    void givenArticleId_whenSearchingArticleComments_thenReturnsArticleComments() {
         // Given
         Long articleId = 1L;
-        // static import [ given = BDDMockito.given]
         ArticleComment expected = createArticleComment("content");
         given(articleCommentRepository.findByArticle_Id(articleId)).willReturn(List.of(expected));
-        // articleRepository의 article 엔티티를 articleId로 찾을 때 title, content, #java를 리턴하게끔
 
         // When
-        List<ArticleCommentDto> actual = sut.searchArticleComment(articleId); // 댓글 리스트
+        List<ArticleCommentDto> actual = sut.searchArticleComments(articleId);
 
         // Then
         assertThat(actual)
                 .hasSize(1)
                 .first().hasFieldOrPropertyWithValue("content", expected.getContent());
-        then(articleCommentRepository).should().findByArticle_Id(articleId); // articleCommentRepository에서 findByArticle_Id를 호출해야 한다
+        then(articleCommentRepository).should().findByArticle_Id(articleId);
     }
 
-    @DisplayName("CREATE - 댓글 정보 입력 시 댓글 저장")
+    @DisplayName("댓글 정보를 입력하면, 댓글을 저장한다.")
     @Test
-    void givenArticleCommentInfo_whenSavingComment_thenSavesComment() {
+    void givenArticleCommentInfo_whenSavingArticleComment_thenSavesArticleComment() {
         // Given
-        // static import [ given = BDDMockito.given, any = ArgumentMatchers.any ]
         ArticleCommentDto dto = createArticleCommentDto("댓글");
         given(articleRepository.getReferenceById(dto.articleId())).willReturn(createArticle());
         given(userAccountRepository.getReferenceById(dto.userAccountDto().userId())).willReturn(createUserAccount());
         given(articleCommentRepository.save(any(ArticleComment.class))).willReturn(null);
-        // articleCommentRepository에 ArticleComment.class의 아무거나 저장하고 null을 리턴
 
         // When
         sut.saveArticleComment(dto);
@@ -75,10 +68,10 @@ class ArticleCommentServiceTest {
         // Then
         then(articleRepository).should().getReferenceById(dto.articleId());
         then(userAccountRepository).should().getReferenceById(dto.userAccountDto().userId());
-        then(articleCommentRepository).should().save(any(ArticleComment.class)); // articleRepository의 save가 호출되어야 한다!
+        then(articleCommentRepository).should().save(any(ArticleComment.class));
     }
 
-    @DisplayName("CREATE - 댓글 저장을 시도했는데 맞는 게시글이 없으면, 경고 로그를 찍고 아무것도 안 함")
+    @DisplayName("댓글 저장을 시도했는데 맞는 게시글이 없으면, 경고 로그를 찍고 아무것도 안 한다.")
     @Test
     void givenNonexistentArticle_whenSavingArticleComment_thenLogsSituationAndDoesNothing() {
         // Given
@@ -94,7 +87,7 @@ class ArticleCommentServiceTest {
         then(articleCommentRepository).shouldHaveNoInteractions();
     }
 
-    @DisplayName("UPDATE - 댓글 수정 정보 입력 시 댓글을 수정")
+    @DisplayName("댓글 정보를 입력하면, 댓글을 수정한다.")
     @Test
     void givenArticleCommentInfo_whenUpdatingArticleComment_thenUpdatesArticleComment() {
         // Given
@@ -114,10 +107,23 @@ class ArticleCommentServiceTest {
         then(articleCommentRepository).should().getReferenceById(dto.id());
     }
 
-
-    @DisplayName("DELETE - 댓글의 ID 입력 시 댓글을 삭제")
+    @DisplayName("없는 댓글 정보를 수정하려고 하면, 경고 로그를 찍고 아무 것도 안 한다.")
     @Test
-    void givenArticleCommentId_whenDeletingArticleComment_thenDeleteArticleComment() {
+    void givenNonexistentArticleComment_whenUpdatingArticleComment_thenLogsWarningAndDoesNothing() {
+        // Given
+        ArticleCommentDto dto = createArticleCommentDto("댓글");
+        given(articleCommentRepository.getReferenceById(dto.id())).willThrow(EntityNotFoundException.class);
+
+        // When
+        sut.updateArticleComment(dto);
+
+        // Then
+        then(articleCommentRepository).should().getReferenceById(dto.id());
+    }
+
+    @DisplayName("댓글 ID를 입력하면, 댓글을 삭제한다.")
+    @Test
+    void givenArticleCommentId_whenDeletingArticleComment_thenDeletesArticleComment() {
         // Given
         Long articleCommentId = 1L;
         String userId = "uno";
@@ -129,7 +135,7 @@ class ArticleCommentServiceTest {
         // Then
         then(articleCommentRepository).should().deleteByIdAndUserAccount_UserId(articleCommentId, userId);
     }
-    // 테스트에 활용할 객체를 만드는 메소드
+
 
     private ArticleCommentDto createArticleCommentDto(String content) {
         return ArticleCommentDto.of(
@@ -160,7 +166,7 @@ class ArticleCommentServiceTest {
 
     private ArticleComment createArticleComment(String content) {
         return ArticleComment.of(
-                Article.of(createUserAccount(), "title", "content", "hashtag"),
+                createArticle(),
                 createUserAccount(),
                 content
         );
@@ -177,12 +183,18 @@ class ArticleCommentServiceTest {
     }
 
     private Article createArticle() {
-        return Article.of(
+        Article article = Article.of(
                 createUserAccount(),
                 "title",
-                "content",
-                "#java"
+                "content"
         );
+        article.addHashtags(Set.of(createHashtag(article)));
+
+        return article;
+    }
+
+    private Hashtag createHashtag(Article article) {
+        return Hashtag.of("java");
     }
 
 }
