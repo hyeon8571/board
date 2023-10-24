@@ -7,40 +7,40 @@
         <attr sel="#hashtags" th:remove="all-but-first">
             <attr sel="div" th:each="hashtag : ${hashtags}">
                 <attr sel="a" th:class="'text-reset'" th:text="${hashtag}" th:href="@{/articles/search-hashtag(
-             page=${param.page},
-             sort=${param.sort},
-             searchType=${searchType.name},
-             searchValue=${hashtag}
-         )}" />
+            page=${param.page},
+            sort=${param.sort},
+            searchType=${searchType.name},
+            searchValue=${hashtag}
+        )}" />
             </attr>
         </attr>
 
         <attr sel="#article-table">
             <attr sel="thead/tr">
                 <attr sel="th.title/a" th:text="'제목'" th:href="@{/articles/search-hashtag(
-             page=${articles.number},
-             sort='title' + (*{sort.getOrderFor('title')} != null ? (*{sort.getOrderFor('title').direction.name} != 'DESC' ? ',desc' : '') : ''),
-             searchType=${searchType.name},
-             searchValue=${param.searchValue}
-         )}"/>
+            page=${articles.number},
+            sort='title' + (*{sort.getOrderFor('title')} != null ? (*{sort.getOrderFor('title').direction.name} != 'DESC' ? ',desc' : '') : ''),
+            searchType=${searchType.name},
+            searchValue=${param.searchValue}
+        )}"/>
                 <attr sel="th.content/a" th:text="'본문'" th:href="@{/articles/search-hashtag(
-             page=${articles.number},
-             sort='content' + (*{sort.getOrderFor('content')} != null ? (*{sort.getOrderFor('content').direction.name} != 'DESC' ? ',desc' : '') : ''),
-             searchType=${searchType.name},
-             searchValue=${param.searchValue}
-         )}"/>
+            page=${articles.number},
+            sort='content' + (*{sort.getOrderFor('content')} != null ? (*{sort.getOrderFor('content').direction.name} != 'DESC' ? ',desc' : '') : ''),
+            searchType=${searchType.name},
+            searchValue=${param.searchValue}
+        )}"/>
                 <attr sel="th.user-id/a" th:text="'작성자'" th:href="@{/articles/search-hashtag(
-             page=${articles.number},
-             sort='userAccount.userId' + (*{sort.getOrderFor('userAccount.userId')} != null ? (*{sort.getOrderFor('userAccount.userId').direction.name} != 'DESC' ? ',desc' : '') : ''),
-             searchType=${searchType.name},
-             searchValue=${param.searchValue}
-         )}"/>
+            page=${articles.number},
+            sort='userAccount.userId' + (*{sort.getOrderFor('userAccount.userId')} != null ? (*{sort.getOrderFor('userAccount.userId').direction.name} != 'DESC' ? ',desc' : '') : ''),
+            searchType=${searchType.name},
+            searchValue=${param.searchValue}
+        )}"/>
                 <attr sel="th.created-at/a" th:text="'작성일'" th:href="@{/articles/search-hashtag(
-             page=${articles.number},
-             sort='createdAt' + (*{sort.getOrderFor('createdAt')} != null ? (*{sort.getOrderFor('createdAt').direction.name} != 'DESC' ? ',desc' : '') : ''),
-             searchType=${searchType.name},
-             searchValue=${param.searchValue}
-         )}"/>
+            page=${articles.number},
+            sort='createdAt' + (*{sort.getOrderFor('createdAt')} != null ? (*{sort.getOrderFor('createdAt').direction.name} != 'DESC' ? ',desc' : '') : ''),
+            searchType=${searchType.name},
+            searchValue=${param.searchValue}
+        )}"/>
             </attr>
             <attr sel="tbody" th:remove="all-but-first">
                 <attr sel="tr[0]" th:each="article : ${articles}">
