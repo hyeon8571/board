@@ -27,7 +27,7 @@ public record ArticleCommentResponse(
     public static ArticleCommentResponse of(Long id, String content, LocalDateTime createdAt, String email, String nickname, String userId, Long parentCommentId) {
         Comparator<ArticleCommentResponse> childCommentComparator = Comparator
                 .comparing(ArticleCommentResponse::createdAt)
-                .thenComparingLong(ArticleCommentResponse::id);
+                .thenComparingLong(ArticleCommentResponse::id); // 오름차순 정렬
         return new ArticleCommentResponse(id, content, createdAt, email, nickname, userId, parentCommentId, new TreeSet<>(childCommentComparator));
     }
     public static ArticleCommentResponse from(ArticleCommentDto dto) {
